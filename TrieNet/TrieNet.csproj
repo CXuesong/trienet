@@ -2,11 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
-    <PackageId>TrieNet</PackageId>
-    <Authors>TrieNet</Authors>
-    <Company>George Mamaladze</Company>
+    <PackageId>CXuesong.Ported.TrieNet</PackageId>
+    <Authors>George Mamaladze</Authors>
     <Product>TrieNet</Product>
-    <Description>.NET Implementations of Trie Data Structures for Substring Search, Auto-completion and Intelli-sense. Includes: patricia trie, suffix trie and a trie implementation using Ukkonen's algorithm.</Description>
+    <Description>
+      This package is a ported package based on George Mamaladze's original one, but targeting .NET Standard 2.0 / .NET 6.0 .
+      .NET Implementations of Trie Data Structures for Substring Search, Auto-completion and Intelli-sense. Includes: patricia trie, suffix trie and a trie implementation using Ukkonen's algorithm.
+    </Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright 2013</Copyright>
     <AssemblyVersion>1.0.4.0</AssemblyVersion>
