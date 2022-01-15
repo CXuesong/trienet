@@ -23,7 +23,7 @@ namespace Gma.DataStructures.StringSearch
             m_MinSuffixLength = minSuffixLength;
         }
 
-        public IEnumerable<T> Retrieve(string query)
+        public IEnumerable<T> Retrieve(ReadOnlySpan<char> query)
         {
             return
                 m_InnerTrie

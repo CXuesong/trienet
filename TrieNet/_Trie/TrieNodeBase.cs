@@ -33,7 +33,7 @@ namespace Gma.DataStructures.StringSearch
 
         protected abstract TrieNodeBase<TValue> GetOrCreateChild(char key);
 
-        protected virtual IEnumerable<TValue> Retrieve(string query, int position)
+        protected virtual IEnumerable<TValue> Retrieve(ReadOnlySpan<char> query, int position)
         {
             return
                 EndOfString(position, query)
@@ -41,7 +41,7 @@ namespace Gma.DataStructures.StringSearch
                     : SearchDeep(query, position);
         }
 
-        protected virtual IEnumerable<TValue> SearchDeep(string query, int position)
+        protected virtual IEnumerable<TValue> SearchDeep(ReadOnlySpan<char> query, int position)
         {
             TrieNodeBase<TValue> nextNode = GetChildOrNull(query, position);
             return nextNode != null
@@ -49,9 +49,9 @@ namespace Gma.DataStructures.StringSearch
                        : Enumerable.Empty<TValue>();
         }
 
-        protected abstract TrieNodeBase<TValue> GetChildOrNull(string query, int position);
+        protected abstract TrieNodeBase<TValue> GetChildOrNull(ReadOnlySpan<char> query, int position);
 
-        private static bool EndOfString(int position, string text)
+        private static bool EndOfString(int position, ReadOnlySpan<char> text)
         {
             return position >= text.Length;
         }

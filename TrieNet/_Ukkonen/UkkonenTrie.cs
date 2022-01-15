@@ -25,7 +25,7 @@ namespace Gma.DataStructures.StringSearch
             _activeLeaf = _root;
         }
 
-        public IEnumerable<T> Retrieve(string word)
+        public IEnumerable<T> Retrieve(ReadOnlySpan<char> word)
         {
             if (word.Length < _minSuffixLength) return Enumerable.Empty<T>();
             var tmpNode = SearchNode(word);
@@ -35,7 +35,7 @@ namespace Gma.DataStructures.StringSearch
         }
 
 
-        private static bool RegionMatches(string first, int toffset, string second, int ooffset, int len)
+        private static bool RegionMatches(ReadOnlySpan<char> first, int toffset, ReadOnlySpan<char> second, int ooffset, int len)
         {
             for (var i = 0; i < len; i++)
             {
@@ -49,7 +49,7 @@ namespace Gma.DataStructures.StringSearch
         /**
          * Returns the tree NodeA<T> (if present) that corresponds to the given string.
          */
-        private Node<T> SearchNode(string word)
+        private Node<T> SearchNode(ReadOnlySpan<char> word)
         {
             /*
              * Verifies if exists a path from the root to a NodeA<T> such that the concatenation

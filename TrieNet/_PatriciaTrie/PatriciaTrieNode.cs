@@ -121,13 +121,13 @@ namespace Gma.DataStructures.StringSearch
             throw new NotSupportedException("Use alternative signature instead.");
         }
 
-        protected override TrieNodeBase<TValue> GetChildOrNull(string query, int position)
+        protected override TrieNodeBase<TValue> GetChildOrNull(ReadOnlySpan<char> query, int position)
         {
             if (query == null) throw new ArgumentNullException("query");
             PatriciaTrieNode<TValue> child;
             if (m_Children.TryGetValue(query[position], out child))
             {
-                var queryPartition = new StringPartition(query, position, child.m_Key.Length);
+                var queryPartition = StringPartition.Slice(query, position, child.m_Key.Length);
                 if (child.m_Key.StartsWith(queryPartition))
                 {
                     return child;

@@ -1,97 +1,94 @@
 ﻿// This code is distributed under MIT license. Copyright (c) 2013 George Mamaladze
 // See license.txt or http://opensource.org/licenses/mit-license.php
-
+#nullable enable
 using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Gma.DataStructures.StringSearch
 {
     [Serializable]
-    [DebuggerDisplay(
-        "{m_Origin.Substring(0,m_StartIndex)} [ {m_Origin.Substring(m_StartIndex,m_PartitionLength)} ] {m_Origin.Substring(m_StartIndex + m_PartitionLength)}"
-        )]
-    public struct StringPartition : IEnumerable<char>
+    [DebuggerDisplay("{_Data.ToString()}")]
+    public readonly struct StringPartition : IEnumerable<char>
     {
-        private readonly string m_Origin;
-        private readonly int m_PartitionLength;
-        private readonly int m_StartIndex;
+        private readonly ReadOnlyMemory<char> _Data;
 
-        public StringPartition(string origin)
-            : this(origin, 0, origin==null ? 0 : origin.Length)
+        public StringPartition(string? origin)
         {
+            _Data = origin.AsMemory();
         }
 
-        public StringPartition(string origin, int startIndex)
+        public StringPartition(string? origin, int startIndex)
             : this(origin, startIndex, origin == null ? 0 : origin.Length - startIndex)
         {
         }
 
-        public StringPartition(string origin, int startIndex, int partitionLength)
+        public StringPartition(string? origin, int startIndex, int partitionLength)
         {
-            if (origin == null) throw new ArgumentNullException("origin");
-            if (startIndex < 0) throw new ArgumentOutOfRangeException("startIndex", "The value must be non negative.");
-            if (partitionLength < 0)
-                throw new ArgumentOutOfRangeException("partitionLength", "The value must be non negative.");
-            m_Origin = string.Intern(origin);
-            m_StartIndex = startIndex;
-            int availableLength = m_Origin.Length - startIndex;
-            m_PartitionLength = Math.Min(partitionLength, availableLength);
+            // TODO compat.
+            _Data = origin.AsMemory(startIndex, Math.Min(partitionLength, origin.Length - startIndex));
         }
 
-        public char this[int index]
+        public StringPartition(ReadOnlyMemory<char> origin)
         {
-            get { return m_Origin[m_StartIndex + index]; }
+            _Data = origin;
         }
 
-        public int Length
+        public StringPartition(ReadOnlyMemory<char> origin, int startIndex, int partitionLength)
         {
-            get { return m_PartitionLength; }
+            _Data = Slice(origin, startIndex, partitionLength);
         }
+
+        // Slices Memory<char> in a StringPartition-compatible way.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ReadOnlyMemory<char> Slice(ReadOnlyMemory<char> origin, int startIndex, int partitionLength)
+        {
+            return origin.Slice(startIndex, Math.Min(partitionLength, origin.Length - startIndex));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ReadOnlySpan<char> Slice(ReadOnlySpan<char> origin, int startIndex, int partitionLength)
+        {
+            return origin.Slice(startIndex, Math.Min(partitionLength, origin.Length - startIndex));
+        }
+
+        public char this[int index] => _Data.Span[index];
+
+        public int Length => _Data.Length;
 
         #region IEnumerable<char> Members
 
-        public IEnumerator<char> GetEnumerator()
-        {
-            for (int i = 0; i < m_PartitionLength; i++)
-            {
-                yield return this[i];
-            }
-        }
+        public Enumerator GetEnumerator() => new Enumerator(_Data);
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator<char> IEnumerable<char>.GetEnumerator() => new Enumerator(_Data);
+
+        IEnumerator IEnumerable.GetEnumerator() => new Enumerator(_Data);
 
         #endregion
 
         public bool Equals(StringPartition other)
         {
-            return string.Equals(m_Origin, other.m_Origin) && m_PartitionLength == other.m_PartitionLength &&
-                   m_StartIndex == other.m_StartIndex;
+            return _Data.Span.Equals(other._Data.Span, StringComparison.Ordinal);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is StringPartition && Equals((StringPartition) obj);
+            return obj is StringPartition p && Equals(p);
         }
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hashCode = (m_Origin != null ? m_Origin.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ m_PartitionLength;
-                hashCode = (hashCode*397) ^ m_StartIndex;
-                return hashCode;
-            }
+            return string.GetHashCode(_Data.Span, StringComparison.Ordinal);
         }
 
-        public bool StartsWith(StringPartition other)
+        public bool StartsWith(StringPartition other) => StartsWith(other._Data.Span);
+
+        public bool StartsWith(ReadOnlySpan<char> other)
         {
             if (Length < other.Length)
             {
@@ -110,8 +107,8 @@ namespace Gma.DataStructures.StringSearch
 
         public SplitResult Split(int splitAt)
         {
-            var head = new StringPartition(m_Origin, m_StartIndex, splitAt);
-            var rest = new StringPartition(m_Origin, m_StartIndex + splitAt, Length - splitAt);
+            var head = new StringPartition(_Data[..splitAt]);
+            var rest = new StringPartition(_Data[splitAt..]);
             return new SplitResult(head, rest);
         }
 
@@ -154,6 +151,74 @@ namespace Gma.DataStructures.StringSearch
         public static bool operator !=(StringPartition left, StringPartition right)
         {
             return !(left == right);
+        }
+
+        public struct Enumerator : IEnumerator<char>
+        {
+            private readonly ReadOnlyMemory<char> memory;
+            private MemoryHandle handle;
+            private unsafe char* cur;
+            private unsafe char* end; // inclusive end
+
+            internal Enumerator(ReadOnlyMemory<char> memory)
+            {
+                this.memory = memory;
+                handle = default;
+                unsafe
+                {
+                    cur = end = null;
+                }
+            }
+
+            /// <inheritdoc />
+            public unsafe bool MoveNext()
+            {
+                if (cur != null)
+                {
+                    if (cur < end)
+                    {
+                        cur++;
+                        return true;
+                    }
+                    return false;
+                }
+                return MoveNextInit();
+            }
+
+            private bool MoveNextInit()
+            {
+                if (memory.Length == 0) return false;
+                handle = memory.Pin();
+                unsafe
+                {
+                    cur = (char*)handle.Pointer;
+                    end = cur + memory.Length - 1;
+                }
+                return true;
+            }
+
+            /// <inheritdoc />
+            public void Reset()
+            {
+                unsafe
+                {
+                    cur = end = null;
+                }
+                handle.Dispose();
+                handle = default;
+            }
+
+            /// <inheritdoc />
+            public unsafe char Current => cur != null ? *cur : '\0';
+
+            /// <inheritdoc />
+            unsafe object? IEnumerator.Current => cur != null ? *cur : '\0';
+
+            /// <inheritdoc />
+            public void Dispose()
+            {
+                Reset();
+            }
         }
     }
 }

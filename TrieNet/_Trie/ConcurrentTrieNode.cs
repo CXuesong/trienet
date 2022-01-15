@@ -45,7 +45,7 @@ namespace Gma.DataStructures.StringSearch
             return m_Children.GetOrAdd(key, new ConcurrentTrieNode<TValue>());
         }
 
-        protected override TrieNodeBase<TValue> GetChildOrNull(string query, int position)
+        protected override TrieNodeBase<TValue> GetChildOrNull(ReadOnlySpan<char> query, int position)
         {
             if (query == null) throw new ArgumentNullException("query");
             ConcurrentTrieNode<TValue> childNode;

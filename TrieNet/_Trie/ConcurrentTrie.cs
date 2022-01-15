@@ -8,7 +8,7 @@ namespace Gma.DataStructures.StringSearch
     [Serializable]
     public class ConcurrentTrie<TValue> : ConcurrentTrieNode<TValue>, ITrie<TValue>
     {
-        public IEnumerable<TValue> Retrieve(string query)
+        public IEnumerable<TValue> Retrieve(ReadOnlySpan<char> query)
         {
             return Retrieve(query, 0);
         }

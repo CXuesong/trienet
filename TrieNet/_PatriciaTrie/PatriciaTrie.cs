@@ -18,7 +18,7 @@ namespace Gma.DataStructures.StringSearch
         {
         }
 
-        public IEnumerable<TValue> Retrieve(string query)
+        public IEnumerable<TValue> Retrieve(ReadOnlySpan<char> query)
         {
             return Retrieve(query, 0);
         }

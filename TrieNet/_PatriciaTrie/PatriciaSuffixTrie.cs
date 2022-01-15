@@ -29,7 +29,7 @@ namespace Gma.DataStructures.StringSearch
             get { return m_MinQueryLength; }
         }
 
-        public IEnumerable<TValue> Retrieve(string query)
+        public IEnumerable<TValue> Retrieve(ReadOnlySpan<char> query)
         {
             return
                 m_InnerTrie
