@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
     <PackageId>CXuesong.Ported.TrieNet</PackageId>
+    <RootNamespace>Gma.DataStructures.StringSearch</RootNamespace>
     <Authors>George Mamaladze</Authors>
     <Product>TrieNet</Product>
     <Description>

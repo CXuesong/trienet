@@ -85,11 +85,11 @@ namespace Gma.DataStructures.StringSearch.Test.TestCaseGeneration
 
         public static IEnumerable<string> GetWords(string fileName)
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            var assembly = typeof(NonsenseGeneration).Assembly;
             var resourceName = typeof(NonsenseGeneration).Namespace + "." + fileName;
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             {
-                Debug.Assert(stream != null, "Could not find resource {0}", resourceName);
+                Debug.Assert(stream != null, $"Could not find resource {resourceName}");
                 using (var file = new StreamReader(stream))
                 {
                     var word = new StringBuilder();
