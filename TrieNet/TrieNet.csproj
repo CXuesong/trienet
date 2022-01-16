@@ -6,7 +6,7 @@
     <Authors>George Mamaladze</Authors>
     <Product>TrieNet</Product>
     <Description>
-      This package is a ported package based on George Mamaladze's original one, but targeting .NET Standard 2.1 / .NET 6.0 .
+      This package is a ported package based on George Mamaladze's original one, but targeting .NET Core 3.1 / .NET 6.0 .
       .NET Implementations of Trie Data Structures for Substring Search, Auto-completion and Intelli-sense. Includes: patricia trie, suffix trie and a trie implementation using Ukkonen's algorithm.
     </Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
