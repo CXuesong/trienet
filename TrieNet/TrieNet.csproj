@@ -10,12 +10,12 @@
       .NET Implementations of Trie Data Structures for Substring Search, Auto-completion and Intelli-sense. Includes: patricia trie, suffix trie and a trie implementation using Ukkonen's algorithm.
     </Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Copyright>Copyright 2013</Copyright>
-    <AssemblyVersion>1.0.4.0</AssemblyVersion>
-    <FileVersion>1.0.4.0</FileVersion>
+    <Copyright>Copyright 2022</Copyright>
+    <AssemblyVersion>1.0.5.0</AssemblyVersion>
+    <FileVersion>1.0.5.0</FileVersion>
     <PackageProjectUrl>https://github.com/gmamaladze/trienet</PackageProjectUrl>
     <PackageTags>ata-structures dotnet algorithms search</PackageTags>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>trienet.png</PackageIcon>
 
