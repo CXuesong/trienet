@@ -15,15 +15,9 @@ namespace Gma.DataStructures.StringSearch.DemoApp
             m_FileName = fileName;
         }
 
-        public string FileName
-        {
-            get { return m_FileName; }
-        }
+        public string FileName => m_FileName;
 
-        public long CharPosition
-        {
-            get { return m_CharPosition; }
-        }
+        public long CharPosition => m_CharPosition;
 
         public override string ToString()
         {

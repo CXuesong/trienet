@@ -9,19 +9,16 @@ namespace Gma.DataStructures.StringSearch
     [Serializable]
     public class TrieNode<TValue> : TrieNodeBase<TValue>
     {
-        private readonly Dictionary<char, TrieNode<TValue>> m_Children;
-        private readonly Queue<TValue> m_Values;
+        private readonly SortedList<char, TrieNode<TValue>> m_Children;
+        private readonly List<TValue> m_Values;
 
         protected TrieNode()
         {
-            m_Children = new Dictionary<char, TrieNode<TValue>>();
-            m_Values = new Queue<TValue>();
+            m_Children = new SortedList<char, TrieNode<TValue>>();
+            m_Values = new List<TValue>();
         }
 
-        protected override int KeyLength
-        {
-            get { return 1; }
-        }
+        protected override int KeyLength => 1;
 
         protected override IEnumerable<TrieNodeBase<TValue>> Children()
         {
@@ -54,7 +51,7 @@ namespace Gma.DataStructures.StringSearch
 
         protected override void AddValue(TValue value)
         {
-            m_Values.Enqueue(value);
+            m_Values.Add(value);
         }
     }
 }
