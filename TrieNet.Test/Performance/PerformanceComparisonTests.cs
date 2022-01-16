@@ -68,12 +68,10 @@ namespace Gma.DataStructures.StringSearch.Test
             string[] randomText = NonsenseGeneration.GetRandomWords(m_Vocabualry, wordCount).ToArray();
             string[] lookupWords = NonsenseGeneration.GetRandomWords(m_Vocabualry, lookupCount).ToArray();
             var trie = CreateTrie<string>(trieTypeName);
-            TimeSpan buildUp;
-            TimeSpan avgLookUp;
-            Mesure(trie, randomText, lookupWords, out buildUp, out avgLookUp);
-            Console.WriteLine("Build-up time: {0}", buildUp);
-            Console.WriteLine("Avg. look-up time: {0}", avgLookUp);
-            m_Writer.WriteLine("{0};{1};{2};{3}", trieTypeName, wordCount, buildUp, avgLookUp);
+            Mesure(trie, randomText, lookupWords, out var avgBuildUp, out var avgLookUp);
+            Console.WriteLine("Avg. Build-up time: {0} ms", avgBuildUp);
+            Console.WriteLine("Avg. look-up time: {0} ms", avgLookUp);
+            m_Writer.WriteLine("{0};{1};{2};{3}", trieTypeName, wordCount, avgBuildUp, avgLookUp);
         }
 
         private ITrie<T> CreateTrie<T>(string trieTypeName)
@@ -99,28 +97,32 @@ namespace Gma.DataStructures.StringSearch.Test
         }
 
         private void Mesure(ITrie<string> trie, IEnumerable<string> randomText, IEnumerable<string> lookupWords,
-            out TimeSpan buildUp, out TimeSpan avgLookUp)
+            out double avgBuildUp, out double avgLookUp)
         {
+            GC.Collect();
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
+            var wordCount = 0;
             foreach (string word in randomText)
             {
+                wordCount++;
                 trie.Add(word, word);
             }
             stopwatch.Stop();
-            buildUp = stopwatch.Elapsed;
+            avgBuildUp = stopwatch.Elapsed.TotalMilliseconds / wordCount;
 
+            GC.Collect();
 
             int lookupCount = 0;
-            stopwatch.Reset();
+            stopwatch.Restart();
             foreach (string lookupWord in lookupWords)
             {
                 lookupCount++;
-                stopwatch.Start();
-                string[] found = trie.Retrieve(lookupWord).ToArray();
-                stopwatch.Stop();
+                var found = trie.Retrieve(lookupWord).ToList();
             }
-            avgLookUp = new TimeSpan(stopwatch.ElapsedTicks / lookupCount);
+            stopwatch.Stop();
+            avgLookUp = stopwatch.Elapsed.TotalMilliseconds / lookupCount;
         }
     }
 }
