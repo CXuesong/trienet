@@ -45,7 +45,7 @@ namespace Gma.DataStructures.StringSearch
 
         protected override TrieNodeBase<TValue> GetChildOrNull(ReadOnlySpan<char> query, int position)
         {
-            if (query == null) throw new ArgumentNullException("query");
+            if (query == null) throw new ArgumentNullException(nameof(query));
             return
                 m_Children.TryGetValue(query[position], out var childNode)
                     ? childNode

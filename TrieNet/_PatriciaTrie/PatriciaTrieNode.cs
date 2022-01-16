@@ -122,7 +122,7 @@ namespace Gma.DataStructures.StringSearch
 
         protected override TrieNodeBase<TValue> GetChildOrNull(ReadOnlySpan<char> query, int position)
         {
-            if (query == null) throw new ArgumentNullException("query");
+            if (query == null) throw new ArgumentNullException(nameof(query));
             if (m_Children.TryGetValue(query[position], out var child))
             {
                 var queryPartition = StringPartition.Slice(query, position, child.m_Key.Length);
