@@ -28,19 +28,17 @@ namespace Gma.DataStructures.StringSearch.DemoApp
 
         private void LoadFile(string fileName)
         {
-            Tuple<WordPosition, string>[] words = GetWords(fileName).ToArray();
-            foreach (var word in words)
+            var words = GetWords(fileName).ToList();
+            foreach (var (wordPosition, text) in words)
             {
-                string text = word.Item2;
-                WordPosition wordPosition = word.Item1;
                 m_PatriciaTrie.Add(text, wordPosition);
             }
         }
 
 
-        private IEnumerable<Tuple<WordPosition, string>> GetWords(string file)
+        private IEnumerable<(WordPosition, string)> GetWords(string file)
         {
-            using Stream stream = File.Open(file, FileMode.Open);
+            using var stream = File.OpenRead(file);
             var word = new StringBuilder();
             while (true)
             {
@@ -58,7 +56,8 @@ namespace Gma.DataStructures.StringSearch.DemoApp
                         if (word.Length != 0)
                         {
                             var wordPosition = new WordPosition(position, file);
-                            yield return new Tuple<WordPosition, string>(wordPosition, word.ToString().ToLower());
+                            // https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1308
+                            yield return (wordPosition, word.ToString().ToUpperInvariant());
                             word.Clear();
                             m_WordCount++;
                         }
@@ -79,7 +78,7 @@ namespace Gma.DataStructures.StringSearch.DemoApp
         {
             string text = textBox1.Text;
             if (string.IsNullOrEmpty(text) || text.Length < 3) return;
-            WordPosition[] result = m_PatriciaTrie.Retrieve(text).ToArray();
+            var result = m_PatriciaTrie.Retrieve(text.ToUpperInvariant()).ToList();
             listBox1.Items.Clear();
             foreach (WordPosition wordPosition in result)
             {
