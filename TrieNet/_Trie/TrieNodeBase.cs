@@ -16,16 +16,16 @@ namespace Gma.DataStructures.StringSearch
 
         protected abstract IEnumerable<TrieNodeBase<TValue>> Children();
 
-        public void Add(string key, int position, TValue value)
+        public void Add(ReadOnlyMemory<char> key, int position, TValue value)
         {
-            if (key == null) throw new ArgumentNullException("key");
-            if (EndOfString(position, key))
+            var keySpan = key.Span;
+            if (EndOfString(position, keySpan))
             {
                 AddValue(value);
                 return;
             }
 
-            TrieNodeBase<TValue> child = GetOrCreateChild(key[position]);
+            TrieNodeBase<TValue> child = GetOrCreateChild(keySpan[position]);
             child.Add(key, position + 1, value);
         }
 

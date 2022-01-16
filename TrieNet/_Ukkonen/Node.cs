@@ -18,8 +18,6 @@ namespace Gma.DataStructures.StringSearch
             _data = new HashSet<T>();
         }
 
-       
-
         public IEnumerable<T> GetData()
         {
             var childData = _edges.Values.Select((e) => e.Target).SelectMany((t) => t.GetData());

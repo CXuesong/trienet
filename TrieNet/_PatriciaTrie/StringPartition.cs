@@ -30,12 +30,17 @@ namespace Gma.DataStructures.StringSearch
         public StringPartition(string? origin, int startIndex, int partitionLength)
         {
             // TODO compat.
-            _Data = origin.AsMemory(startIndex, Math.Min(partitionLength, origin.Length - startIndex));
+            _Data = origin?.AsMemory(startIndex, Math.Min(partitionLength, origin.Length - startIndex)) ?? default;
         }
 
         public StringPartition(ReadOnlyMemory<char> origin)
         {
             _Data = origin;
+        }
+
+        public StringPartition(ReadOnlyMemory<char> origin, int startIndex)
+        {
+            _Data = origin[startIndex..];
         }
 
         public StringPartition(ReadOnlyMemory<char> origin, int startIndex, int partitionLength)

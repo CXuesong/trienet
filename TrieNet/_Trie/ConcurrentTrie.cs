@@ -13,7 +13,7 @@ namespace Gma.DataStructures.StringSearch
             return Retrieve(query, 0);
         }
 
-        public void Add(string key, TValue value)
+        public void Add(ReadOnlyMemory<char> key, TValue value)
         {
             Add(key, 0, value);
         }

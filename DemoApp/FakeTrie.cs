@@ -28,9 +28,9 @@ namespace Gma.DataStructures.StringSearch.DemoApp
             }
         }
 
-        public void Add(string key, T value)
+        public void Add(ReadOnlyMemory<char> key, T value)
         {
-            var keyValPair = new KeyValuePair<string, T>(key, value);
+            var keyValPair = new KeyValuePair<string, T>(key.ToString(), value);
             m_Stack.Push(keyValPair);
         }
     }

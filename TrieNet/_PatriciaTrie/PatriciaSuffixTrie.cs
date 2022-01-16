@@ -37,7 +37,7 @@ namespace Gma.DataStructures.StringSearch
                     .Distinct();
         }
 
-        public void Add(string key, TValue value)
+        public void Add(ReadOnlyMemory<char> key, TValue value)
         {
             IEnumerable<StringPartition> allSuffixes = GetAllSuffixes(MinQueryLength, key);
             foreach (StringPartition currentSuffix in allSuffixes)
@@ -46,7 +46,7 @@ namespace Gma.DataStructures.StringSearch
             }
         }
 
-        private static IEnumerable<StringPartition> GetAllSuffixes(int minSuffixLength, string word)
+        private static IEnumerable<StringPartition> GetAllSuffixes(int minSuffixLength, ReadOnlyMemory<char> word)
         {
             for (int i = word.Length - minSuffixLength; i >= 0; i--)
             {

@@ -23,9 +23,8 @@ namespace Gma.DataStructures.StringSearch
             return Retrieve(query, 0);
         }
 
-        public virtual void Add(string key, TValue value)
+        public virtual void Add(ReadOnlyMemory<char> key, TValue value)
         {
-            if (key == null) throw new ArgumentNullException("key");
             Add(new StringPartition(key), value);
         }
 

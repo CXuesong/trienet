@@ -31,20 +31,19 @@ namespace Gma.DataStructures.StringSearch
                     .Distinct();
         }
 
-        public void Add(string key, T value)
+        public void Add(ReadOnlyMemory<char> key, T value)
         {
-            foreach (string suffix in GetAllSuffixes(m_MinSuffixLength, key))
+            foreach (var suffix in GetAllSuffixes(m_MinSuffixLength, key))
             {
                 m_InnerTrie.Add(suffix, value);
             }
         }
 
-        private static IEnumerable<string> GetAllSuffixes(int minSuffixLength, string word)
+        private static IEnumerable<ReadOnlyMemory<char>> GetAllSuffixes(int minSuffixLength, ReadOnlyMemory<char> word)
         {
             for (int i = word.Length - minSuffixLength; i >= 0; i--)
             {
-                var partition = new StringPartition(word, i);
-                yield return partition.ToString();
+                yield return word[i..];
             }
         }
     }
