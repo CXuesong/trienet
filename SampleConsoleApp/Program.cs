@@ -52,8 +52,8 @@ namespace Gma.DataStructures.StringSearch.SampleConsoleApp
             int[] result = trie.Retrieve(searchString).ToArray();
             stopWatch.Stop();
 
-            string matchesText = String.Join(",", result);
-            int matchesCount = result.Count();
+            string matchesText = string.Join(",", result);
+            int matchesCount = result.Length;
 
             if (matchesCount == 0)
             {
@@ -69,25 +69,23 @@ namespace Gma.DataStructures.StringSearch.SampleConsoleApp
 
         private static IEnumerable<WordAndLine> GetWordsFromFile(string file)
         {
-            using (StreamReader reader = File.OpenText(file))
+            using StreamReader reader = File.OpenText(file);
+            Console.WriteLine("Processing file {0} ...", file);
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            int lineNo = 0;
+            while (!reader.EndOfStream)
             {
-                Console.WriteLine("Processing file {0} ...", file);
-                var stopWatch = new Stopwatch();
-                stopWatch.Start();
-                int lineNo = 0;
-                while (!reader.EndOfStream)
+                string line = reader.ReadLine();
+                lineNo++;
+                IEnumerable<string> words = GetWordsFromLine(line);
+                foreach (string word in words)
                 {
-                    string line = reader.ReadLine();
-                    lineNo++;
-                    IEnumerable<string> words = GetWordsFromLine(line);
-                    foreach (string word in words)
-                    {
-                        yield return new WordAndLine {Line = lineNo, Word = word};
-                    }
+                    yield return new WordAndLine {Line = lineNo, Word = word};
                 }
-                stopWatch.Stop();
-                Console.WriteLine("Lines:{0}\tTime:{1}", lineNo, stopWatch.Elapsed);
             }
+            stopWatch.Stop();
+            Console.WriteLine("Lines:{0}\tTime:{1}", lineNo, stopWatch.Elapsed);
         }
 
         private static IEnumerable<string> GetWordsFromLine(string line)

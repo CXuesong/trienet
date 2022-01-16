@@ -104,8 +104,7 @@ namespace Gma.DataStructures.StringSearch
 
         protected void GetOrCreateChild(StringPartition key, TValue value)
         {
-            PatriciaTrieNode<TValue> child;
-            if (!m_Children.TryGetValue(key[0], out child))
+            if (!m_Children.TryGetValue(key[0], out var child))
             {
                 child = new PatriciaTrieNode<TValue>(key, value);
                 m_Children.Add(key[0], child);
@@ -124,8 +123,7 @@ namespace Gma.DataStructures.StringSearch
         protected override TrieNodeBase<TValue> GetChildOrNull(ReadOnlySpan<char> query, int position)
         {
             if (query == null) throw new ArgumentNullException("query");
-            PatriciaTrieNode<TValue> child;
-            if (m_Children.TryGetValue(query[position], out child))
+            if (m_Children.TryGetValue(query[position], out var child))
             {
                 var queryPartition = StringPartition.Slice(query, position, child.m_Key.Length);
                 if (child.m_Key.StartsWith(queryPartition))

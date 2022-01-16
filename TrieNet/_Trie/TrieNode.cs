@@ -35,8 +35,7 @@ namespace Gma.DataStructures.StringSearch
 
         protected override TrieNodeBase<TValue> GetOrCreateChild(char key)
         {
-            TrieNode<TValue> result;
-            if (!m_Children.TryGetValue(key, out result))
+            if (!m_Children.TryGetValue(key, out var result))
             {
                 result = new TrieNode<TValue>();
                 m_Children.Add(key, result);
@@ -47,9 +46,8 @@ namespace Gma.DataStructures.StringSearch
         protected override TrieNodeBase<TValue> GetChildOrNull(ReadOnlySpan<char> query, int position)
         {
             if (query == null) throw new ArgumentNullException("query");
-            TrieNode<TValue> childNode;
             return
-                m_Children.TryGetValue(query[position], out childNode)
+                m_Children.TryGetValue(query[position], out var childNode)
                     ? childNode
                     : null;
         }

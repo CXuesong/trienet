@@ -49,8 +49,7 @@ namespace Gma.DataStructures.StringSearch
 
         public Edge<T> GetEdge(char ch)
         {
-            Edge<T> result;
-            _edges.TryGetValue(ch, out result);
+            _edges.TryGetValue(ch, out var result);
             return result;
         }
 
